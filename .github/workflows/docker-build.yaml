@@ -1,0 +1,23 @@
+name: Docker Build Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
+
+    runs-on: ${{ matrix.architecture == 'amd64' && 'ubuntu-latest' || 'self-hosted' }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Build prüfen
+        run: docker build -t template-test .

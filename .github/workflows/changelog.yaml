@@ -1,0 +1,27 @@
+name: Generiere vollständiges Changelog
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  changelog:
+    runs-on: self-hosted
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Wichtig: Holen des gesamten Commit-Verlaufs
+
+      - name: Generiere Changelog
+        id: changelog
+        uses: janheinrichmerker/action-github-changelog-generator@v2.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          output: CHANGELOG.md
+
+      - name: Changelog in Pull Request kommentieren
+        run: |
+          echo "${{ steps.changelog.outputs.changelog }}" >> $GITHUB_STEP_SUMMARY
+          echo "Changelog wurde generiert und in den Pull Request kommentiert."
